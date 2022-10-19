@@ -12,7 +12,12 @@ public class Inventory : MonoBehaviour
     [SerializeField] private GameObject _itemHeap;
     [SerializeField] private GameObject _findHeap;
 
-    public bool IsFreePlace = true;
+    LayerMask mask;
+
+    void Start()
+    {
+        mask = LayerMask.GetMask("Heap");
+    }
 
     public void OnEnable()
     {
@@ -31,14 +36,11 @@ public class Inventory : MonoBehaviour
             cell.Render(item);
             
             cell.Injecting += () => Destroy(cell.gameObject);
-            cell.Injecting += () => {
-                GameObject aa = Instantiate(_findHeap, _player.transform.position - new Vector3(0, 0.26f, 0) + _player.transform.forward * 3, _player.transform.rotation);
-                
-                if (IsFreePlace)
+            cell.Injecting += () =>
+            {
+                RaycastHit hit;
+                if (!Physics.SphereCast(_player.transform.position, 4, _player.transform.forward, out hit, 2, LayerMask.GetMask("Heap")))
                     Instantiate(_itemHeap, _player.transform.position - new Vector3(0, 0.26f, 0) + _player.transform.forward * 3, _player.transform.rotation);
-                else
-                    IsFreePlace = true;
-
             };
         });
     }

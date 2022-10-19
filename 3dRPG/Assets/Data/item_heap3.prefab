@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3347848343756669907}
   - component: {fileID: 3347848343753295337}
   - component: {fileID: 3347848343754379601}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: item_heap3
   m_TagString: Item heap
   m_Icon: {fileID: 0}
