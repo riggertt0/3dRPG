@@ -16,6 +16,8 @@ public class PlayerMove : MonoBehaviour
 
     public Vector3 moveVector;
 
+    GameObject enemy;
+
 
     void Start()
     {

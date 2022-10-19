@@ -13,7 +13,7 @@ public class FollowPlayer : MonoBehaviour
     void Start()
     {
         player = GameObject.Find("Player");
-        mask = LayerMask.GetMask("Building", "Place");
+        mask = LayerMask.GetMask("Building", "Place", "Transparent Place");
     }
 
     void Update()
@@ -27,20 +27,37 @@ public class FollowPlayer : MonoBehaviour
         Ray castPoint = Camera.main.ScreenPointToRay(start);
         RaycastHit[] hitColliders = Physics.RaycastAll(castPoint, distance, mask);
 
-        for (int i = 0; i < transparentObj.Count; ++i)
-        {
-            Color color = transparentObj[i].GetComponent<MeshRenderer>().materials[0].color;
-            transparentObj[i].GetComponent<MeshRenderer>().materials[0].color = new Color(color.r, color.g, color.b, 1.0f);
-        }
-        transparentObj.Clear();
-
         foreach (RaycastHit iter in hitColliders)
         {
             GameObject building = iter.transform.gameObject;
             Color color = iter.transform.gameObject.GetComponent<MeshRenderer>().materials[0].color;
             iter.transform.gameObject.GetComponent<MeshRenderer>().materials[0].color = new Color(color.r, color.g, color.b, 0.5f);
+            if(iter.transform.gameObject.layer == 6)
+                iter.transform.gameObject.layer = LayerMask.NameToLayer("Transparent Place");
 
             transparentObj.Add(building);
         }
+
+        for (int i = 0; i < transparentObj.Count; ++i)
+        {
+            if (!CheckElementsMatch(hitColliders, transparentObj[i])) 
+            {
+                Color color = transparentObj[i].GetComponent<MeshRenderer>().materials[0].color;
+                transparentObj[i].GetComponent<MeshRenderer>().materials[0].color = new Color(color.r, color.g, color.b, 1.0f);
+                if(transparentObj[i].layer == 8)
+                    transparentObj[i].layer = LayerMask.NameToLayer("Place");
+                transparentObj.RemoveAt(i);
+            }
+        }
+    }
+
+    bool CheckElementsMatch(RaycastHit[] hitColliders, GameObject obj)
+    {
+        foreach (RaycastHit iter in hitColliders)
+        {
+            if (iter.transform.gameObject == obj)
+                return true;
+        }
+        return false;
     }
 }
